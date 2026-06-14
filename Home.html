@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вайфу.нет — Главная</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .post {
+      background: #1a1a33;
+      border: 1px solid #444466;
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .post-header { display:flex; align-items:center; gap:12px; margin-bottom:0.8rem; }
+    .post-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #ff69b4; }
+    .post-author { font-weight:bold; color:#ff99ff; }
+    .post-time { font-size:0.8rem; color:#888; }
+    .post-content { margin:0.8rem 0; line-height:1.5; }
+    .post-actions { display:flex; align-items:center; gap:1rem; margin:0.8rem 0; }
+    .like-btn { background:none; border:1px solid #555; border-radius:20px; color:#fff; padding:0.3rem 0.8rem; cursor:pointer; width:auto; }
+    .like-btn.liked { border-color:#ff69b4; color:#ff69b4; }
+    .comment-count { color:#aaa; font-size:0.9rem; }
+    .comment { background:#0f0f1f; border-radius:8px; padding:0.6rem 0.8rem; margin:0.4rem 0; }
+    .comment-header { display:flex; gap:8px; align-items:center; margin-bottom:4px; }
+    .comment-author { color:#ff99ff; font-weight:bold; font-size:0.85rem; }
+    .comment-time { color:#666; font-size:0.75rem; }
+    .comment-form { display:flex; gap:8px; margin-top:0.8rem; }
+    .comment-input { flex:1; padding:0.6rem; border-radius:8px; border:1px solid #555; background:#0f0f1f; color:white; width:auto; margin:0; }
+    .send-comment-btn { padding:0.6rem 1rem; width:auto; margin:0; }
+    .voice-btn { padding:0.6rem; width:auto; margin:0; background:#333; }
+    .voice-btn.recording { background:#ff3333; }
+    .post-form { background:#1a1a33; border:1px solid #444466; border-radius:16px; padding:1.2rem; margin-bottom:1rem; }
+    textarea#postText { width:100%; padding:0.8rem; border-radius:8px; border:1px solid #555; background:#0f0f1f; color:white; resize:vertical; min-height:80px; font-size:1rem; }
+    #welcomeUser { text-align:center; color:#ff69b4; font-size:1.4rem; margin-bottom:1.5rem; }
+    main { text-align:left; max-width:600px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Вайфу.нет 💜</div>
+    <nav>
+      <a href="home.html">Главная</a>
+      <a href="profile.html">Профиль</a>
+      <a href="search.html">Поиск</a>
+      <a href="chat.html">Чаты</a>
+      <a href="#" id="logout">Выйти</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="welcomeUser"></div>
+
+    <div class="post-form">
+      <textarea id="postText" placeholder="Что думаешь, отаку? 🌸"></textarea>
+      <button onclick="createPost()" style="margin-top:0.8rem;">Опубликовать</button>
+    </div>
+
+    <div id="feed"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
