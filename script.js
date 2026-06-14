@@ -10,20 +10,23 @@ const SUPABASE_KEY = 'sb_publishable_IhnwSLLXhpDyA7Mz3awNBQ_Oz4BtFAW';
 const db = {
   async query(table, method = 'GET', body = null, filters = '') {
     const url = `${SUPABASE_URL}/rest/v1/${table}${filters}`;
-    const options = {
-      method,
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': method === 'POST' ? 'return=representation' : ''
-      }
+    const headers = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
     };
+    if (method === 'POST' || method === 'PATCH') headers['Prefer'] = 'return=representation';
+    const options = { method, headers };
     if (body) options.body = JSON.stringify(body);
-    const res = await fetch(url, options);
+    let res;
+    try {
+      res = await fetch(url, options);
+    } catch (e) {
+      throw new Error('Нет соединения. Проверь интернет.');
+    }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `HTTP ${res.status}`);
+      throw new Error(err.message || err.hint || `HTTP ${res.status}`);
     }
     return method === 'DELETE' ? null : res.json();
   },
@@ -238,9 +241,9 @@ async function renderFeed() {
   feed.innerHTML = '<p style="text-align:center;color:#aaa">Загрузка...</p>';
 
   try {
-    const posts    = await db.select('posts', '?order=created_at.desc&limit=50');
+    const posts    = await db.select('posts', '?order=id.desc&limit=50');
     const likes    = await db.select('likes', '');
-    const comments = await db.select('comments', '?order=created_at.asc');
+    const comments = await db.select('comments', '?order=id.asc');
     const current  = getCurrentUser();
 
     feed.innerHTML = '';
