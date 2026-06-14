@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вайфу.нет — Вход / Регистрация</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:system-ui,sans-serif; background:#0d0d1a; color:#e0e0ff; min-height:100vh; display:flex; flex-direction:column; }
+    header { background:rgba(20,20,40,0.9); padding:1.2rem; text-align:center; }
+    .logo { font-size:2.2rem; font-weight:bold; color:#ff69b4; }
+    main { flex:1; padding:2rem 5%; max-width:500px; margin:0 auto; }
+    h1.welcome { text-align:center; color:#ff69b4; font-size:2.5rem; margin-bottom:2rem; }
+    form { background:#1a1a33; padding:2rem; border-radius:16px; border:1px solid #444; }
+    h2 { text-align:center; color:#ff99ff; margin-bottom:1.5rem; }
+    input, select, button {
+      width:100%; padding:0.9rem; margin:0.7rem 0; border-radius:8px; border:1px solid #555; background:#0f0f1f; color:white;
+    }
+    select {
+      appearance:none; background:#0f0f1f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ff69b4' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 0.8rem center/12px;
+    }
+    button {
+      background:#ff69b4; border:none; color:black; font-weight:bold; cursor:pointer;
+    }
+    button:hover { background:#ff8ac4; transform:translateY(-2px); }
+    .error { color:#ff5555; text-align:center; margin:1rem 0; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Вайфу.нет 💜</div>
+  </header>
+
+  <main>
+    <h1 class="welcome">Привет, отаку!</h1>
+
+    <form id="registerForm">
+      <h2>Регистрация</h2>
+      <input type="text" id="regNick" placeholder="Никнейм (senpai)" required>
+      <input type="email" id="regEmail" placeholder="Email" required>
+      <input type="password" id="regPass" placeholder="Пароль (минимум 6 символов)" required minlength="6">
+      <select id="regRole" required>
+        <option value="" disabled selected>Кто ты? ♡</option>
+        <option value="kun">Кун ♂</option>
+        <option value="tyan">Тян ♀</option>
+        <option value="other">Другое / не указывать</option>
+      </select>
+      <button type="submit">Создать аккаунт</button>
+      <p class="error" id="regError"></p>
+      <p style="text-align:center; margin-top:1rem;">
+        Уже есть аккаунт? <a href="#" id="showLogin" style="color:#ff99ff;">Войти</a>
+      </p>
+    </form>
+
+    <form id="loginForm" class="hidden">
+      <h2>Вход</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPass" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+      <p class="error" id="loginError"></p>
+      <p style="text-align:center; margin-top:1rem;">
+        Нет аккаунта? <a href="#" id="showRegister" style="color:#ff99ff;">Зарегистрироваться</a>
+      </p>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

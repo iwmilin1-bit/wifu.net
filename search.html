@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Вайфу.нет — Поиск</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0d0d1a;
+      color: #e0e0ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(20,20,40,0.9);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ff69b4;
+    }
+    nav a {
+      color: #ccc;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    nav a:hover { color: #ff69b4; }
+    main {
+      flex: 1;
+      padding: 2rem 5%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1.welcome {
+      text-align: center;
+      color: #ff69b4;
+      margin-bottom: 2rem;
+    }
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+    input {
+      flex: 1;
+      padding: 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #0f0f1f;
+      color: white;
+    }
+    button {
+      padding: 0.9rem 1.8rem;
+      background: #ff69b4;
+      border: none;
+      color: black;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #ff8ac4; }
+    #searchResults > div {
+      background: #1e1e38;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border-radius: 12px;
+      border: 1px solid #444;
+    }
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .user-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+    .status-online { color:#55ff88; font-weight:bold; animation:pulse 1.8s infinite; }
+    .status-recent { color:#88ff88; }
+    .status-away { color:#aaaaff; }
+    .status-off { color:#777; }
+    @keyframes pulse {
+      0% { opacity:1; text-shadow:0 0 8px #55ff88; }
+      50% { opacity:0.5; text-shadow:0 0 20px #55ff88; }
+      100% { opacity:1; text-shadow:0 0 8px #55ff88; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Вайфу.нет 💜</div>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="profile.html">Профиль</a>
+      <a href="search.html">Поиск</a>
+      <a href="chat.html">Чаты</a>
+      <a href="#" id="logout">Выйти</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1 class="welcome">Поиск отаку</h1>
+
+    <form id="searchForm">
+      <input type="text" id="searchQuery" placeholder="Введите никнейм..." required>
+      <button type="submit">Найти</button>
+    </form>
+
+    <div id="searchResults"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

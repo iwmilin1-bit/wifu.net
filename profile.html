@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вайфу.нет — Профиль</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0d0d1a;
+      color: #e0e0ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(20,20,40,0.9);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ff69b4;
+    }
+    nav a {
+      color: #ccc;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    nav a:hover { color: #ff69b4; }
+    main {
+      flex: 1;
+      padding: 2rem 5%;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    h1 {
+      color: #ff69b4;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .profile-card {
+      background: #1a1a33;
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid #444466;
+    }
+    .avatar-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    #profileAvatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #ff69b4;
+      box-shadow: 0 0 20px rgba(255,105,180,0.4);
+    }
+    .info-item {
+      margin: 1rem 0;
+      padding: 0.8rem;
+      background: #0f0f1f;
+      border-radius: 8px;
+    }
+    .info-label {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      padding: 0.9rem;
+      margin: 0.6rem 0;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #0f0f1f;
+      color: white;
+    }
+    textarea { height: 100px; resize: vertical; }
+    button {
+      background: #ff69b4;
+      border: none;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #ff8ac4; transform: translateY(-2px); }
+    .success { color: #55ff55; text-align: center; margin: 1rem 0; }
+    .error { color: #ff5555; text-align: center; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Вайфу.нет 💜</div>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="profile.html">Профиль</a>
+      <a href="search.html">Поиск</a>
+      <a href="chat.html">Чаты</a>
+      <a href="#" id="logout">Выйти</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Твой профиль</h1>
+
+    <div class="profile-card">
+      <div class="avatar-container">
+        <img id="profileAvatar" src="" alt="Аватар">
+      </div>
+
+      <div id="profileDisplay">
+        <!-- Данные будут вставлены через JS -->
+      </div>
+
+      <form id="editProfileForm" style="margin-top: 2rem;">
+        <h2>Редактировать</h2>
+
+        <div class="info-label">Никнейм</div>
+        <input type="text" id="editNick" required>
+
+        <div class="info-label">Кто ты?</div>
+        <select id="editRole" required>
+          <option value="kun">Кун ♂</option>
+          <option value="tyan">Тян ♀</option>
+          <option value="other">Другое / не указывать</option>
+        </select>
+
+        <div class="info-label">Ссылка на аватарку (URL)</div>
+        <input type="url" id="editAvatar" placeholder="https://i.imgur.com/... или оставь пустым">
+
+        <div class="info-label">Любимые аниме (через запятую)</div>
+        <textarea id="editFavAnime" placeholder="Attack on Titan, Jujutsu Kaisen..."></textarea>
+
+        <div class="info-label">Waifu / Husbando</div>
+        <input type="text" id="editWaifu" placeholder="Rem, Asuna, Makima...">
+
+        <button type="submit">Сохранить изменения</button>
+      </form>
+
+      <p id="profileMessage" class="success"></p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
