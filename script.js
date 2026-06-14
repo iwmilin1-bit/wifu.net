@@ -132,12 +132,11 @@ if (registerForm && loginForm) {
       const [newUser] = await db.insert('users', {
         nick,
         email,
-        pass,   // ⚠️ В продакшне используй Supabase Auth + bcrypt!
+        pass,
         role,
         avatar: '',
         fav_anime: '',
-        waifu: '',
-        created_at: new Date().toISOString()
+        waifu: ''
       });
 
       setCurrentUser(newUser);
@@ -220,17 +219,21 @@ async function createPost() {
   if (!text)    return alert('Напиши хоть что-то!');
   if (!current) return alert('Залогинься сначала!');
 
+  const btn = document.querySelector('.post-form button');
+  if (btn) { btn.disabled = true; btn.textContent = 'Публикуем...'; }
+
   try {
     await db.insert('posts', {
       author_nick: current.nick,
       avatar: current.avatar || 'https://via.placeholder.com/48',
-      text,
-      created_at: new Date().toISOString()
+      text
     });
     document.getElementById('postText').value = '';
-    renderFeed();
+    await renderFeed();
   } catch (err) {
     alert('Ошибка: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Опубликовать'; }
   }
 }
 
@@ -329,8 +332,7 @@ async function addComment(postId) {
     await db.insert('comments', {
       post_id: postId,
       author_nick: current.nick,
-      text,
-      created_at: new Date().toISOString()
+      text
     });
     input.value = '';
     renderFeed();
@@ -378,8 +380,7 @@ async function addVoiceComment(postId, base64) {
     await db.insert('comments', {
       post_id: postId,
       author_nick: current.nick,
-      voice_url: base64,
-      created_at: new Date().toISOString()
+      voice_url: base64
     });
     renderFeed();
   } catch (err) {
@@ -600,8 +601,7 @@ async function openChat(withNick) {
       await db.insert('messages', {
         from_nick: current.nick,
         to_nick: withNick,
-        text,
-        created_at: new Date().toISOString()
+        text
       });
       msgInput.value = '';
       await loadMessages();
