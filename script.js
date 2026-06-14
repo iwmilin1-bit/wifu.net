@@ -1,4 +1,6 @@
-// Хранилище пользователей
+// =====================
+// ХРАНИЛИЩЕ
+// =====================
 function getUsers() {
   return JSON.parse(localStorage.getItem('waifuUsers')) || [];
 }
@@ -15,40 +17,49 @@ function clearCurrentUser() {
   localStorage.removeItem('currentWaifuUser');
 }
 
-// Онлайн
+// =====================
+// ОНЛАЙН
+// =====================
 function updateOnline() {
   const user = getCurrentUser();
-  if (user) {
-    let users = getUsers();
-    const idx = users.findIndex(u => u.email === user.email);
-    if (idx !== -1) {
-      users[idx].lastActive = Date.now();
-      saveUsers(users);
-    }
+  if (!user) return;
+  let users = getUsers();
+  const idx = users.findIndex(u => u.email === user.email);
+  if (idx !== -1) {
+    users[idx].lastActive = Date.now();
+    saveUsers(users);
   }
 }
 function getOnlineCount() {
-  const users = getUsers();
   const now = Date.now();
-  return users.filter(u => u.lastActive && (now - u.lastActive < 5 * 60 * 1000)).length;
+  return getUsers().filter(u => u.lastActive && (now - u.lastActive < 5 * 60 * 1000)).length;
 }
 
-// Определяем тип страницы
-const path = window.location.pathname;
-const isLoginPage = path.includes('login.html') || path.includes('index.html');
+// =====================
+// ЗАЩИТА СТРАНИЦ
+// Страницы без защиты: login.html, index.html (они содержат registerForm)
+// =====================
+const onAuthPage = !!document.getElementById('registerForm');
 
-// Защита страниц — только для НЕ login страниц
-if (!isLoginPage && !getCurrentUser()) {
+if (!onAuthPage && !getCurrentUser()) {
   window.location.replace('login.html');
 }
 
-// Если залогинен и открыл login/index — редирект на главную
-if (isLoginPage && getCurrentUser() && !document.getElementById('feed')) {
-  // не редиректим если мы уже на главной с feed
-}
+// =====================
+// ВЫХОД — вешаем на #logout и #logoutBtn
+// =====================
+document.querySelectorAll('#logout, #logoutBtn').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    clearCurrentUser();
+    window.location.replace('login.html');
+  });
+});
 
-// Логика login.html / index.html (страница входа)
-if (document.getElementById('registerForm') && document.getElementById('loginForm')) {
+// =====================
+// СТРАНИЦА ВХОДА / РЕГИСТРАЦИИ
+// =====================
+if (onAuthPage) {
   const registerForm = document.getElementById('registerForm');
   const loginForm = document.getElementById('loginForm');
   const regError = document.getElementById('regError');
@@ -66,33 +77,19 @@ if (document.getElementById('registerForm') && document.getElementById('loginFor
     registerForm.classList.remove('hidden');
   });
 
-  registerForm.addEventListener('submit', e => {
+  registerForm?.addEventListener('submit', e => {
     e.preventDefault();
+    const nick = document.getElementById('regNick').value.trim();
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('regPass').value;
+    const role = document.getElementById('regRole').value;
 
-    const nick = document.getElementById('regNick')?.value.trim();
-    const email = document.getElementById('regEmail')?.value.trim().toLowerCase();
-    const pass = document.getElementById('regPass')?.value;
-    const role = document.getElementById('regRole')?.value;
-
-    if (!nick || !email || !pass || !role) {
-      regError.textContent = 'Заполни все поля!';
-      return;
-    }
-    if (pass.length < 6) {
-      regError.textContent = 'Пароль минимум 6 символов';
-      return;
-    }
+    if (!nick || !email || !pass || !role) { regError.textContent = 'Заполни все поля!'; return; }
+    if (pass.length < 6) { regError.textContent = 'Пароль минимум 6 символов'; return; }
 
     let users = getUsers();
-
-    if (users.some(u => u.email === email)) {
-      regError.textContent = 'Email занят!';
-      return;
-    }
-    if (users.some(u => u.nick.toLowerCase() === nick.toLowerCase())) {
-      regError.textContent = 'Ник занят!';
-      return;
-    }
+    if (users.some(u => u.email === email)) { regError.textContent = 'Email занят!'; return; }
+    if (users.some(u => u.nick.toLowerCase() === nick.toLowerCase())) { regError.textContent = 'Ник занят!'; return; }
 
     const newUser = { nick, email, pass, role, created: new Date().toISOString() };
     users.push(newUser);
@@ -101,49 +98,33 @@ if (document.getElementById('registerForm') && document.getElementById('loginFor
     window.location.replace('home.html');
   });
 
-  loginForm.addEventListener('submit', e => {
+  loginForm?.addEventListener('submit', e => {
     e.preventDefault();
-
-    const email = document.getElementById('loginEmail')?.value.trim().toLowerCase();
-    const pass = document.getElementById('loginPass')?.value;
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.pass === pass);
-
-    if (!user) {
-      loginError.textContent = 'Неверный email или пароль!';
-      return;
-    }
-
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('loginPass').value;
+    const user = getUsers().find(u => u.email === email && u.pass === pass);
+    if (!user) { loginError.textContent = 'Неверный email или пароль!'; return; }
     setCurrentUser(user);
     window.location.replace('home.html');
   });
 }
 
-// Выход — работает для всех страниц
-document.querySelectorAll('#logout, #logoutBtn').forEach(el => {
-  el.addEventListener('click', e => {
-    e.preventDefault();
-    clearCurrentUser();
-    window.location.replace('login.html');
-  });
-});
-
-// Приветствие на главной
+// =====================
+// ГЛАВНАЯ (home.html) — лента
+// =====================
 if (document.getElementById('welcomeUser')) {
   const user = getCurrentUser();
   if (user) {
-    let roleText = user.role === 'kun' ? 'кун ♂' : user.role === 'tyan' ? 'тян ♀' : 'отаку ❓';
+    const roleText = user.role === 'kun' ? 'кун ♂' : user.role === 'tyan' ? 'тян ♀' : 'отаку ❓';
     document.getElementById('welcomeUser').innerHTML = `Привет, ${user.nick}! 💜<br><small>Ты ${roleText}</small>`;
   }
 }
 
-// Посты
 function createPost() {
   const text = document.getElementById('postText')?.value.trim();
   if (!text) return alert('Напиши хоть что-то!');
-
   const current = getCurrentUser();
-  if (!current) return alert('Залогинься сначала!');
+  if (!current) return;
 
   const post = {
     id: Date.now(),
@@ -158,7 +139,6 @@ function createPost() {
   let posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
   posts.unshift(post);
   localStorage.setItem('waifuPosts', JSON.stringify(posts));
-
   document.getElementById('postText').value = '';
   renderFeed();
 }
@@ -166,15 +146,12 @@ function createPost() {
 function renderFeed() {
   const feed = document.getElementById('feed');
   if (!feed) return;
-
-  feed.innerHTML = '';
-
   const posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
   const current = getCurrentUser();
+  feed.innerHTML = '';
 
   posts.forEach(post => {
     const isLiked = current && post.likes.includes(current.nick || current.email);
-
     const postEl = document.createElement('div');
     postEl.className = 'post';
     postEl.innerHTML = `
@@ -182,14 +159,12 @@ function renderFeed() {
         <img src="${post.avatar}" alt="" class="post-avatar">
         <div>
           <span class="post-author">${post.author}</span>
-          <div class="post-time">${new Date(post.time).toLocaleString('ru', {hour:'2-digit', minute:'2-digit', day:'numeric', month:'short'})}</div>
+          <div class="post-time">${new Date(post.time).toLocaleString('ru', {hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})}</div>
         </div>
       </div>
       <div class="post-content">${post.text.replace(/\n/g, '<br>')}</div>
       <div class="post-actions">
-        <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
-          ❤️ ${post.likes.length}
-        </button>
+        <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">❤️ ${post.likes.length}</button>
         <span class="comment-count">💬 ${post.comments.length}</span>
       </div>
       <div class="comments" id="comments-${post.id}">
@@ -216,68 +191,59 @@ function renderFeed() {
 
 function toggleLike(postId) {
   const current = getCurrentUser();
-  if (!current) return alert('Залогинься!');
-
+  if (!current) return;
   let posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
   const post = posts.find(p => p.id === postId);
   if (!post) return;
-
   const userId = current.nick || current.email;
   if (post.likes.includes(userId)) {
     post.likes = post.likes.filter(id => id !== userId);
   } else {
     post.likes.push(userId);
   }
-
   localStorage.setItem('waifuPosts', JSON.stringify(posts));
   renderFeed();
 }
 
 function addComment(postId) {
   const input = document.getElementById(`commentInput-${postId}`);
-  const text = input.value.trim();
+  const text = input?.value.trim();
   if (!text) return;
-
   const current = getCurrentUser();
-  if (!current) return alert('Залогинься!');
-
+  if (!current) return;
   let posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
   const post = posts.find(p => p.id === postId);
   if (!post) return;
-
   post.comments.push({ author: current.nick, text, time: Date.now() });
   localStorage.setItem('waifuPosts', JSON.stringify(posts));
   input.value = '';
   renderFeed();
 }
 
-// Голосовые комментарии
+// Голосовые
 let recorder = null;
 let chunks = [];
 
 function toggleVoice(postId) {
   const btn = document.getElementById(`voiceBtn-${postId}`);
   if (!btn) return;
-
   if (!recorder || recorder.state === 'inactive') {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        recorder = new MediaRecorder(stream);
-        chunks = [];
-        recorder.ondataavailable = e => chunks.push(e.data);
-        recorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/webm' });
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = () => addVoiceComment(postId, reader.result);
-          btn.classList.remove('recording');
-          btn.textContent = '🎤';
-        };
-        recorder.start();
-        btn.classList.add('recording');
-        btn.textContent = '■';
-      })
-      .catch(err => alert('Микрофон недоступен: ' + err.message));
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      recorder = new MediaRecorder(stream);
+      chunks = [];
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => addVoiceComment(postId, reader.result);
+        btn.classList.remove('recording');
+        btn.textContent = '🎤';
+      };
+      recorder.start();
+      btn.classList.add('recording');
+      btn.textContent = '■';
+    }).catch(err => alert('Микрофон недоступен: ' + err.message));
   } else {
     recorder.stop();
   }
@@ -285,24 +251,23 @@ function toggleVoice(postId) {
 
 function addVoiceComment(postId, base64) {
   const current = getCurrentUser();
-  if (!current) return alert('Залогинься!');
-
+  if (!current) return;
   let posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
   const post = posts.find(p => p.id === postId);
   if (!post) return;
-
   post.comments.push({ author: current.nick, voice: base64, time: Date.now() });
   localStorage.setItem('waifuPosts', JSON.stringify(posts));
   renderFeed();
 }
 
-// Инициализация ленты
 if (document.getElementById('feed')) {
   renderFeed();
   setInterval(updateOnline, 30000);
 }
 
-// Профиль
+// =====================
+// ПРОФИЛЬ
+// =====================
 if (document.getElementById('editProfileForm')) {
   const user = getCurrentUser();
   if (user) {
@@ -311,10 +276,7 @@ if (document.getElementById('editProfileForm')) {
     document.getElementById('editAvatar').value = user.avatar || '';
     document.getElementById('editFavAnime').value = user.favAnime || '';
     document.getElementById('editWaifu').value = user.waifu || '';
-
-    const avatar = user.avatar || 'https://via.placeholder.com/140';
-    document.getElementById('profileAvatar').src = avatar;
-
+    document.getElementById('profileAvatar').src = user.avatar || 'https://via.placeholder.com/140';
     document.getElementById('profileDisplay').innerHTML = `
       <div class="info-item"><div class="info-label">Никнейм</div>${user.nick}</div>
       <div class="info-item"><div class="info-label">Email</div>${user.email}</div>
@@ -328,80 +290,71 @@ if (document.getElementById('editProfileForm')) {
     e.preventDefault();
     const user = getCurrentUser();
     if (!user) return;
-
-    const newNick = document.getElementById('editNick').value.trim();
-    const newRole = document.getElementById('editRole').value;
-    const newAvatar = document.getElementById('editAvatar').value.trim();
-    const newFavAnime = document.getElementById('editFavAnime').value.trim();
-    const newWaifu = document.getElementById('editWaifu').value.trim();
-
     let users = getUsers();
     const idx = users.findIndex(u => u.email === user.email);
     if (idx !== -1) {
-      users[idx].nick = newNick;
-      users[idx].role = newRole;
-      users[idx].avatar = newAvatar;
-      users[idx].favAnime = newFavAnime;
-      users[idx].waifu = newWaifu;
+      users[idx].nick = document.getElementById('editNick').value.trim();
+      users[idx].role = document.getElementById('editRole').value;
+      users[idx].avatar = document.getElementById('editAvatar').value.trim();
+      users[idx].favAnime = document.getElementById('editFavAnime').value.trim();
+      users[idx].waifu = document.getElementById('editWaifu').value.trim();
       saveUsers(users);
       setCurrentUser(users[idx]);
     }
-
-    document.getElementById('profileMessage').textContent = 'Сохранено! ✅';
-    setTimeout(() => document.getElementById('profileMessage').textContent = '', 3000);
+    const msg = document.getElementById('profileMessage');
+    msg.textContent = 'Сохранено! ✅';
+    setTimeout(() => msg.textContent = '', 3000);
   });
 }
 
-// Поиск
+// =====================
+// ПОИСК
+// =====================
 if (document.getElementById('searchForm')) {
   document.getElementById('searchForm').addEventListener('submit', e => {
     e.preventDefault();
     const query = document.getElementById('searchQuery').value.trim().toLowerCase();
-    const users = getUsers();
-    const results = users.filter(u => u.nick.toLowerCase().includes(query));
+    const results = getUsers().filter(u => u.nick.toLowerCase().includes(query));
     const container = document.getElementById('searchResults');
     const now = Date.now();
 
-    if (results.length === 0) {
+    if (!results.length) {
       container.innerHTML = '<p style="text-align:center;color:#aaa;">Никого не найдено 😢</p>';
       return;
     }
 
     container.innerHTML = results.map(u => {
       const diff = now - (u.lastActive || 0);
-      let status, statusClass;
-      if (diff < 2 * 60 * 1000) { status = '🟢 Онлайн'; statusClass = 'status-online'; }
-      else if (diff < 10 * 60 * 1000) { status = '🟡 Недавно был'; statusClass = 'status-recent'; }
-      else if (diff < 60 * 60 * 1000) { status = '🔵 Отошёл'; statusClass = 'status-away'; }
-      else { status = '⚫ Офлайн'; statusClass = 'status-off'; }
+      let status, cls;
+      if (diff < 2*60*1000)        { status = '🟢 Онлайн';        cls = 'status-online'; }
+      else if (diff < 10*60*1000)  { status = '🟡 Недавно был';   cls = 'status-recent'; }
+      else if (diff < 60*60*1000)  { status = '🔵 Отошёл';        cls = 'status-away';   }
+      else                          { status = '⚫ Офлайн';        cls = 'status-off';    }
 
       return `
         <div>
           <div class="user-header">
-            <img class="user-avatar" src="${u.avatar || 'https://via.placeholder.com/64'}" style="border-color:${statusClass === 'status-online' ? '#55ff88' : statusClass === 'status-recent' ? '#88ff88' : statusClass === 'status-away' ? '#aaaaff' : '#555'}">
+            <img class="user-avatar" src="${u.avatar || 'https://via.placeholder.com/64'}">
             <div>
               <strong>${u.nick}</strong> — ${u.role === 'kun' ? 'Кун ♂' : u.role === 'tyan' ? 'Тян ♀' : 'Другое'}
-              <div class="${statusClass}">${status}</div>
+              <div class="${cls}">${status}</div>
             </div>
           </div>
           ${u.favAnime ? `<div>🎌 <em>${u.favAnime}</em></div>` : ''}
           ${u.waifu ? `<div>💜 Waifu: <em>${u.waifu}</em></div>` : ''}
-          <button class="start-chat-btn" style="margin-top:10px" onclick="startChat('${u.nick}')">💬 Написать</button>
+          <button class="start-chat-btn" style="margin-top:10px" onclick="location.href='chat.html?with=${encodeURIComponent(u.nick)}'">💬 Написать</button>
         </div>
       `;
     }).join('');
   });
 }
 
-function startChat(nick) {
-  window.location.href = `chat.html?with=${encodeURIComponent(nick)}`;
-}
-
-// Чат
-if (document.getElementById('userList')) {
+// =====================
+// ЧАТ
+// =====================
+if (document.getElementById('userList') !== null) {
   const current = getCurrentUser();
-  const params = new URLSearchParams(window.location.search);
-  const chatWithNick = params.get('with');
+  const chatWithNick = new URLSearchParams(window.location.search).get('with');
 
   if (chatWithNick) {
     document.getElementById('chatArea').classList.remove('hidden');
@@ -412,18 +365,17 @@ if (document.getElementById('userList')) {
       const input = document.getElementById('messageInput');
       const text = input.value.trim();
       if (!text) return;
-
-      const chatKey = getChatKey(current.nick, chatWithNick);
-      let msgs = JSON.parse(localStorage.getItem(chatKey)) || [];
+      const key = getChatKey(current.nick, chatWithNick);
+      let msgs = JSON.parse(localStorage.getItem(key)) || [];
       msgs.push({ from: current.nick, text, time: Date.now() });
-      localStorage.setItem(chatKey, JSON.stringify(msgs));
+      localStorage.setItem(key, JSON.stringify(msgs));
       input.value = '';
       loadMessages(chatWithNick);
     });
   } else {
-    const users = getUsers().filter(u => u.email !== current?.email);
-    document.getElementById('userList').innerHTML = users.length
-      ? users.map(u => `<div style="padding:1rem;background:#1e1e38;margin:0.5rem 0;border-radius:12px;cursor:pointer" onclick="startChat('${u.nick}')">${u.nick}</div>`).join('')
+    const others = getUsers().filter(u => u.email !== current?.email);
+    document.getElementById('userList').innerHTML = others.length
+      ? others.map(u => `<div style="padding:1rem;background:#1e1e38;margin:0.5rem 0;border-radius:12px;cursor:pointer" onclick="location.href='chat.html?with=${encodeURIComponent(u.nick)}'">${u.nick}</div>`).join('')
       : '<p style="text-align:center;color:#aaa">Пока никого нет 😢</p>';
   }
 }
@@ -431,11 +383,9 @@ if (document.getElementById('userList')) {
 function getChatKey(a, b) {
   return 'chat_' + [a, b].sort().join('_');
 }
-
 function loadMessages(withNick) {
   const current = getCurrentUser();
-  const chatKey = getChatKey(current.nick, withNick);
-  const msgs = JSON.parse(localStorage.getItem(chatKey)) || [];
+  const msgs = JSON.parse(localStorage.getItem(getChatKey(current.nick, withNick))) || [];
   const win = document.getElementById('chatWindow');
   win.innerHTML = msgs.map(m => `
     <div class="message ${m.from === current.nick ? 'my-msg' : 'other-msg'}">
@@ -445,13 +395,9 @@ function loadMessages(withNick) {
   win.scrollTop = win.scrollHeight;
 }
 
-// Инициализация ленты
-if (document.getElementById('feed')) {
-  renderFeed();
-  setInterval(updateOnline, 30000);
-}
-
-// Админка
+// =====================
+// АДМИНКА
+// =====================
 if (window.location.pathname.includes('admin.html')) {
   const countEl = document.getElementById('onlineCount');
   if (countEl) {
