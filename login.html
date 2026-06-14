@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Вайфу.нет — Главная</title>
+  <title>Вайфу.нет — Вход / Регистрация</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: system-ui, sans-serif;
       background: #0d0d1a;
@@ -14,242 +13,100 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-bottom: 70px;
     }
-
-    /* ── Шапка ── */
     header {
-      background: rgba(13,13,26,0.97);
-      padding: 0.9rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 1px solid #222244;
-    }
-    .logo { font-size: 1.5rem; font-weight: bold; color: #ff69b4; }
-
-    /* ── Нижняя навигация (мобильная) ── */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(13,13,26,0.97);
-      border-top: 1px solid #222244;
-      display: flex;
-      z-index: 100;
-    }
-    .bottom-nav a {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 0.6rem 0.3rem;
-      color: #888;
-      text-decoration: none;
-      font-size: 0.65rem;
-      gap: 3px;
-      transition: color 0.2s;
-    }
-    .bottom-nav a.active, .bottom-nav a:hover { color: #ff69b4; }
-    .bottom-nav a svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-
-    /* ── Контент ── */
-    main { flex: 1; padding: 1rem; max-width: 640px; width: 100%; margin: 0 auto; }
-
-    #welcomeUser {
-      color: #ff69b4;
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
+      background: rgba(20,20,40,0.9);
+      padding: 1.2rem;
       text-align: center;
     }
-
-    /* ── Форма поста ── */
-    .post-form {
+    .logo {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #ff69b4;
+    }
+    main {
+      flex: 1;
+      padding: 2rem 5%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    h1.welcome {
+      text-align: center;
+      color: #ff69b4;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    form {
       background: #1a1a33;
-      border: 1px solid #333355;
+      padding: 2rem;
       border-radius: 16px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-    .post-form textarea {
-      width: 100%;
-      background: #0f0f1f;
       border: 1px solid #444;
-      border-radius: 10px;
-      color: #e0e0ff;
-      padding: 0.8rem;
-      font-size: 1rem;
-      resize: none;
-      min-height: 80px;
-      font-family: inherit;
-      outline: none;
     }
-    .post-form textarea:focus { border-color: #ff69b4; }
-    .post-form button {
-      margin-top: 0.7rem;
+    h2 { text-align: center; color: #ff99ff; margin-bottom: 1.5rem; }
+    input, select, button {
       width: 100%;
-      padding: 0.85rem;
+      padding: 0.9rem;
+      margin: 0.7rem 0;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #0f0f1f;
+      color: white;
+    }
+    select {
+      appearance: none;
+      background: #0f0f1f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ff69b4' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 0.8rem center/12px;
+    }
+    button {
       background: #ff69b4;
       border: none;
-      border-radius: 10px;
       color: black;
       font-weight: bold;
-      font-size: 1rem;
       cursor: pointer;
-      min-height: 48px;
     }
-    .post-form button:active { background: #e0559f; transform: scale(0.98); }
-
-    /* ── Пост ── */
-    .post {
-      background: #1a1a33;
-      border: 1px solid #2a2a4a;
-      border-radius: 16px;
-      padding: 1rem;
-      margin-bottom: 0.8rem;
-    }
-    .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.7rem; }
-    .post-avatar {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #ff69b4;
-      flex-shrink: 0;
-    }
-    .post-author { font-weight: bold; color: #ff99ff; font-size: 0.95rem; }
-    .post-time { font-size: 0.75rem; color: #666; margin-top: 1px; }
-    .post-content { color: #e0e0ff; line-height: 1.6; font-size: 0.95rem; margin-bottom: 0.8rem; word-break: break-word; }
-
-    .post-actions { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; }
-    .like-btn {
-      background: none;
-      border: 1px solid #444;
-      color: #ccc;
-      padding: 0.45rem 0.9rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      min-height: 40px;
-      transition: 0.2s;
-    }
-    .like-btn.liked { border-color: #ff69b4; color: #ff69b4; }
-    .comment-count { display: flex; align-items: center; color: #888; font-size: 0.9rem; }
-
-    /* ── Комментарии ── */
-    .comments { margin-top: 0.4rem; }
-    .comment {
-      background: #0f0f1f;
-      border-radius: 8px;
-      padding: 0.5rem 0.7rem;
-      margin: 0.3rem 0;
-      font-size: 0.88rem;
-    }
-    .comment-header { display: flex; gap: 6px; align-items: baseline; margin-bottom: 2px; }
-    .comment-author { color: #ff99ff; font-weight: bold; font-size: 0.85rem; }
-    .comment-time { color: #555; font-size: 0.72rem; }
-    .comment p { color: #ccc; word-break: break-word; }
-
-    .comment-form { display: flex; gap: 6px; margin-top: 0.6rem; align-items: center; }
-    .comment-input {
-      flex: 1;
-      background: #0f0f1f;
-      border: 1px solid #333;
-      border-radius: 20px;
-      color: white;
-      padding: 0.55rem 0.9rem;
-      font-size: 0.9rem;
-      min-height: 40px;
-      outline: none;
-    }
-    .comment-input:focus { border-color: #ff69b4; }
-    .voice-btn {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: 1px solid #444;
-      background: #1a1a33;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .voice-btn.recording { background: #ff3333; border-color: #ff3333; }
-    .send-comment-btn {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: none;
-      background: #ff69b4;
-      color: black;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .send-comment-btn:active { transform: scale(0.93); }
-
-    /* ── Logout btn в шапке ── */
-    #logoutBtn {
-      background: none;
-      border: 1px solid #444;
-      color: #888;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      min-height: 36px;
-    }
-    #logoutBtn:active { color: #ff69b4; border-color: #ff69b4; }
-
-    .feed-empty { text-align: center; color: #666; padding: 2rem; }
+    button:hover { background: #ff8ac4; transform: translateY(-2px); }
+    .error { color: #ff5555; text-align: center; margin: 1rem 0; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
   <header>
     <div class="logo">Вайфу.нет 💜</div>
-    <button id="logoutBtn" id="logout">Выйти</button>
   </header>
 
   <main>
-    <div id="welcomeUser"></div>
+    <h1 class="welcome">Привет, отаку!</h1>
 
-    <div class="post-form">
-      <textarea id="postText" placeholder="Что думаешь, отаку? 🌸"></textarea>
-      <button onclick="createPost()">Опубликовать</button>
-    </div>
+    <form id="registerForm">
+      <h2>Регистрация</h2>
+      <input type="text" id="regNick" placeholder="Никнейм (senpai)" required autocomplete="off">
+      <input type="email" id="regEmail" placeholder="Email" required autocomplete="off">
+      <input type="password" id="regPass" placeholder="Пароль (минимум 6 символов)" required minlength="6">
+      <select id="regRole" required>
+        <option value="" disabled selected>Кто ты в этом мире? ♡</option>
+        <option value="kun">Кун ♂</option>
+        <option value="tyan">Тян ♀</option>
+        <option value="other">Другое / не указывать</option>
+      </select>
+      <button type="submit">Создать аккаунт</button>
+      <p class="error" id="regError"></p>
+      <p style="text-align:center; margin-top:1rem;">
+        Уже есть аккаунт? <a href="#" id="showLogin" style="color:#ff99ff;">Войти</a>
+      </p>
+    </form>
 
-    <div id="feed"></div>
+    <form id="loginForm" class="hidden">
+      <h2>Вход</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required autocomplete="off">
+      <input type="password" id="loginPass" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+      <p class="error" id="loginError"></p>
+      <p style="text-align:center; margin-top:1rem;">
+        Нет аккаунта? <a href="#" id="showRegister" style="color:#ff99ff;">Зарегистрироваться</a>
+      </p>
+    </form>
   </main>
 
-  <!-- Нижняя навигация -->
-  <nav class="bottom-nav">
-    <a href="index.html" class="active">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Главная
-    </a>
-    <a href="search.html">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Поиск
-    </a>
-    <a href="chat.html">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Чаты
-    </a>
-    <a href="profile.html">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Профиль
-    </a>
-  </nav>
-
   <script src="script.js"></script>
-  <script>
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('currentWaifuUser');
-      window.location.href = 'login.html';
-    });
-  </script>
 </body>
 </html>
