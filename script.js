@@ -154,13 +154,15 @@ function renderFeed() {
     const isLiked = current && post.likes.includes(current.nick || current.email);
     const postEl = document.createElement('div');
     postEl.className = 'post';
+    const isOwner = current && current.nick === post.author;
     postEl.innerHTML = `
       <div class="post-header">
         <img src="${post.avatar}" alt="" class="post-avatar">
-        <div>
+        <div style="flex:1">
           <span class="post-author">${post.author}</span>
           <div class="post-time">${new Date(post.time).toLocaleString('ru', {hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})}</div>
         </div>
+        ${isOwner ? `<button class="delete-btn" onclick="deletePost(${post.id})" title="Удалить пост">🗑</button>` : ''}
       </div>
       <div class="post-content">${post.text.replace(/\n/g, '<br>')}</div>
       <div class="post-actions">
@@ -168,11 +170,12 @@ function renderFeed() {
         <span class="comment-count">💬 ${post.comments.length}</span>
       </div>
       <div class="comments" id="comments-${post.id}">
-        ${post.comments.map(c => `
+        ${post.comments.map((c, i) => `
           <div class="comment">
             <div class="comment-header">
               <span class="comment-author">${c.author}:</span>
               <small class="comment-time">${new Date(c.time).toLocaleTimeString('ru')}</small>
+              ${current && current.nick === c.author ? `<button class="delete-comment-btn" onclick="deleteComment(${post.id}, ${i})">🗑</button>` : ''}
             </div>
             <p>${c.text || ''}</p>
             ${c.voice ? `<audio controls src="${c.voice}"></audio>` : ''}
@@ -187,6 +190,24 @@ function renderFeed() {
     `;
     feed.appendChild(postEl);
   });
+}
+
+function deletePost(postId) {
+  if (!confirm('Удалить пост?')) return;
+  let posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
+  posts = posts.filter(p => p.id !== postId);
+  localStorage.setItem('waifuPosts', JSON.stringify(posts));
+  renderFeed();
+}
+
+function deleteComment(postId, commentIndex) {
+  if (!confirm('Удалить комментарий?')) return;
+  let posts = JSON.parse(localStorage.getItem('waifuPosts')) || [];
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  post.comments.splice(commentIndex, 1);
+  localStorage.setItem('waifuPosts', JSON.stringify(posts));
+  renderFeed();
 }
 
 function toggleLike(postId) {
