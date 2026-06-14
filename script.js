@@ -171,9 +171,16 @@ if (registerForm && loginForm) {
 }
 
 // ============================================================
-//  Защита страниц (кроме login.html / index.html с формами)
+//  Если на странице входа — уже залогинен → на главную
 // ============================================================
 const hasAuthForms = !!document.getElementById('registerForm');
+if (hasAuthForms && getCurrentUser()) {
+  window.location.href = 'index.html';
+}
+
+// ============================================================
+//  Защита страниц — если не залогинен и это не страница входа
+// ============================================================
 if (!hasAuthForms && !getCurrentUser()) {
   window.location.href = 'login.html';
 }
