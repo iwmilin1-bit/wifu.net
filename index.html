@@ -4,115 +4,213 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Вайфу.нет — Главная</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    main { text-align: left; max-width: 640px; margin: 0 auto; }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-    #welcomeUser { text-align: center; color: #ff69b4; font-size: 1.5rem; margin: 1.5rem 0 1rem; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0d0d1a;
+      color: #e0e0ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 70px;
+    }
 
+    /* ── Шапка ── */
+    header {
+      background: rgba(13,13,26,0.97);
+      padding: 0.9rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #222244;
+    }
+    .logo { font-size: 1.5rem; font-weight: bold; color: #ff69b4; }
+
+    /* ── Нижняя навигация (мобильная) ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(13,13,26,0.97);
+      border-top: 1px solid #222244;
+      display: flex;
+      z-index: 100;
+    }
+    .bottom-nav a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 0.3rem;
+      color: #888;
+      text-decoration: none;
+      font-size: 0.65rem;
+      gap: 3px;
+      transition: color 0.2s;
+    }
+    .bottom-nav a.active, .bottom-nav a:hover { color: #ff69b4; }
+    .bottom-nav a svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    /* ── Контент ── */
+    main { flex: 1; padding: 1rem; max-width: 640px; width: 100%; margin: 0 auto; }
+
+    #welcomeUser {
+      color: #ff69b4;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* ── Форма поста ── */
     .post-form {
       background: #1a1a33;
-      border: 1px solid #444466;
+      border: 1px solid #333355;
       border-radius: 16px;
-      padding: 1.2rem;
-      margin-bottom: 1.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
     }
     .post-form textarea {
       width: 100%;
       background: #0f0f1f;
-      border: 1px solid #555;
+      border: 1px solid #444;
       border-radius: 10px;
-      color: white;
+      color: #e0e0ff;
       padding: 0.8rem;
       font-size: 1rem;
-      resize: vertical;
+      resize: none;
       min-height: 80px;
       font-family: inherit;
+      outline: none;
     }
+    .post-form textarea:focus { border-color: #ff69b4; }
     .post-form button {
-      margin-top: 0.8rem;
+      margin-top: 0.7rem;
       width: 100%;
+      padding: 0.85rem;
+      background: #ff69b4;
+      border: none;
+      border-radius: 10px;
+      color: black;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      min-height: 48px;
     }
+    .post-form button:active { background: #e0559f; transform: scale(0.98); }
 
+    /* ── Пост ── */
     .post {
       background: #1a1a33;
-      border: 1px solid #333355;
+      border: 1px solid #2a2a4a;
       border-radius: 16px;
-      padding: 1.2rem;
-      margin-bottom: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.8rem;
     }
-    .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.8rem; }
-    .post-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #ff69b4; }
-    .post-author { font-weight: bold; color: #ff99ff; }
-    .post-time { font-size: 0.8rem; color: #888; }
-    .post-content { color: #e0e0ff; line-height: 1.6; margin-bottom: 0.8rem; }
-    .post-actions { display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; }
+    .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.7rem; }
+    .post-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ff69b4;
+      flex-shrink: 0;
+    }
+    .post-author { font-weight: bold; color: #ff99ff; font-size: 0.95rem; }
+    .post-time { font-size: 0.75rem; color: #666; margin-top: 1px; }
+    .post-content { color: #e0e0ff; line-height: 1.6; font-size: 0.95rem; margin-bottom: 0.8rem; word-break: break-word; }
 
+    .post-actions { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; }
     .like-btn {
       background: none;
-      border: 1px solid #555;
+      border: 1px solid #444;
       color: #ccc;
-      padding: 0.4rem 0.8rem;
+      padding: 0.45rem 0.9rem;
       border-radius: 20px;
       cursor: pointer;
       font-size: 0.9rem;
-      width: auto;
-      margin: 0;
+      min-height: 40px;
       transition: 0.2s;
     }
     .like-btn.liked { border-color: #ff69b4; color: #ff69b4; }
-    .like-btn:hover { border-color: #ff69b4; }
-    .comment-count { color: #888; font-size: 0.9rem; }
+    .comment-count { display: flex; align-items: center; color: #888; font-size: 0.9rem; }
 
-    .comments { margin-top: 0.5rem; }
+    /* ── Комментарии ── */
+    .comments { margin-top: 0.4rem; }
     .comment {
       background: #0f0f1f;
       border-radius: 8px;
-      padding: 0.6rem 0.8rem;
-      margin: 0.4rem 0;
-      font-size: 0.9rem;
+      padding: 0.5rem 0.7rem;
+      margin: 0.3rem 0;
+      font-size: 0.88rem;
     }
-    .comment-header { display: flex; gap: 8px; align-items: baseline; margin-bottom: 2px; }
-    .comment-author { color: #ff99ff; font-weight: bold; }
-    .comment-time { color: #666; font-size: 0.75rem; }
+    .comment-header { display: flex; gap: 6px; align-items: baseline; margin-bottom: 2px; }
+    .comment-author { color: #ff99ff; font-weight: bold; font-size: 0.85rem; }
+    .comment-time { color: #555; font-size: 0.72rem; }
+    .comment p { color: #ccc; word-break: break-word; }
 
-    .comment-form { display: flex; gap: 8px; margin-top: 0.6rem; }
+    .comment-form { display: flex; gap: 6px; margin-top: 0.6rem; align-items: center; }
     .comment-input {
       flex: 1;
       background: #0f0f1f;
-      border: 1px solid #444;
-      border-radius: 8px;
+      border: 1px solid #333;
+      border-radius: 20px;
       color: white;
-      padding: 0.5rem 0.8rem;
+      padding: 0.55rem 0.9rem;
       font-size: 0.9rem;
-      width: auto;
-      margin: 0;
+      min-height: 40px;
+      outline: none;
     }
-    .voice-btn, .send-comment-btn {
-      padding: 0.5rem 0.8rem;
-      border-radius: 8px;
-      border: none;
+    .comment-input:focus { border-color: #ff69b4; }
+    .voice-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid #444;
+      background: #1a1a33;
+      color: white;
+      font-size: 1rem;
       cursor: pointer;
-      font-size: 0.85rem;
-      width: auto;
-      margin: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
-    .voice-btn { background: #2a2a4a; color: white; }
-    .voice-btn.recording { background: #ff3333; }
-    .send-comment-btn { background: #ff69b4; color: black; font-weight: bold; }
+    .voice-btn.recording { background: #ff3333; border-color: #ff3333; }
+    .send-comment-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #ff69b4;
+      color: black;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .send-comment-btn:active { transform: scale(0.93); }
+
+    /* ── Logout btn в шапке ── */
+    #logoutBtn {
+      background: none;
+      border: 1px solid #444;
+      color: #888;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      min-height: 36px;
+    }
+    #logoutBtn:active { color: #ff69b4; border-color: #ff69b4; }
+
+    .feed-empty { text-align: center; color: #666; padding: 2rem; }
   </style>
 </head>
 <body>
 
   <header>
     <div class="logo">Вайфу.нет 💜</div>
-    <nav>
-      <a href="index.html">Главная</a>
-      <a href="profile.html">Профиль</a>
-      <a href="search.html">Поиск</a>
-      <a href="chat.html">Чаты</a>
-      <a href="#" id="logout">Выйти</a>
-    </nav>
+    <button id="logoutBtn" id="logout">Выйти</button>
   </header>
 
   <main>
@@ -126,6 +224,32 @@
     <div id="feed"></div>
   </main>
 
+  <!-- Нижняя навигация -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="active">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Главная
+    </a>
+    <a href="search.html">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Поиск
+    </a>
+    <a href="chat.html">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Чаты
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Профиль
+    </a>
+  </nav>
+
   <script src="script.js"></script>
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('currentWaifuUser');
+      window.location.href = 'login.html';
+    });
+  </script>
 </body>
 </html>
